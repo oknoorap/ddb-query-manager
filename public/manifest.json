@@ -1,0 +1,21 @@
+{
+  "name": "DynamoDB Query Manager",
+  "description": "Save and load DyanamoDB",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://*.aws.amazon.com/dynamodbv2/*"],
+      "run_at": "document_end",
+      "js": ["react.min.js", "react-dom.min.js", "ddb-query-manager.umd.js"],
+      "css": ["style.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["get-scan-or-queries.js"],
+      "matches": ["https://*/*"]
+    }
+  ]
+}

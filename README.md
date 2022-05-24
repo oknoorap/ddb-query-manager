@@ -6,8 +6,10 @@ DDB Query Manager is a Chrome Extension that helps you to save and load query co
 
 ## How to Download
 
-1. Go to [Release Page](https://github.com/oknoorap/ddb-query-manager/releases) and download latest version.
-2. Install extension by drag and drop file to Chrome.
+1. Go to [Release Page](https://github.com/oknoorap/ddb-query-manager/releases) and download latest version (download the `.crx` file).
+2. Open your Chrome Browser.
+3. Go to settings click Extensions in the left sidebar navigation or open `chrome://extensions/` directly on the address bar.
+4. Drag and drop `.crx` file into the browser.
 
 ### Notes
 

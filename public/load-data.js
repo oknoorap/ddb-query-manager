@@ -157,36 +157,70 @@ function expandSection(selector) {
   });
 }
 
-async function loadData() {
+async function handleLoadData(loadedData) {
   const table = document.querySelector(".bodyWrapper h1").textContent;
 
+  if (!loadedData.table)
+    throw new Error("DDB_QUERY_MANAGER invalid data, missing table");
+
+  if (loadedData.table !== table)
+    throw new Error("DDB_QUERY_MANAGER table is not match");
+
+  await expandSection(".bodyWrapper awsui-expandable-section");
+  updateDOMValues(loadedData.values);
+}
+
+async function uploadJSON() {
+  let loadedJSON;
+  const uploaderNode = document.querySelector("#ddb-qm-input-upload");
+
+  uploaderNode?.addEventListener(
+    "change",
+    (event) => {
+      const [JSONFile] = event.target.files;
+      const fileReader = new FileReader();
+      fileReader.onload = (event) => {
+        loadedJSON = event.target.result;
+      };
+      fileReader.readAsText(JSONFile);
+    },
+    false
+  );
+
+  uploaderNode?.click();
+
+  return new Promise((resolve) => {
+    let intervalCount = 0;
+    const interval = setInterval(() => {
+      if (loadedJSON || intervalCount >= 10000) {
+        clearInterval(interval);
+        resolve(JSON.parse(loadedJSON));
+      }
+
+      intervalCount++;
+    }, 50);
+  });
+}
+
+async function loadData() {
   try {
     const loadJSON = localStorage.getItem("DDB_QM_CURRENT_LOAD_JSON");
-    let loadKey = "";
-    let loadedData;
 
     if (!loadJSON) {
       // Load data from storage
-      loadKey = localStorage.getItem("DDB_QM_CURRENT_LOAD_KEY");
+      const loadKey = localStorage.getItem("DDB_QM_CURRENT_LOAD_KEY");
       if (!loadKey) throw new Error("DDB_QUERY_MANAGER invalid data");
 
       const dataFromStorage = localStorage.getItem(loadKey);
       if (!dataFromStorage)
         throw new Error("DDB_QUERY_MANAGER data not found in storage");
-      loadedData = JSON.parse(dataFromStorage);
+
+      await handleLoadData(JSON.parse(dataFromStorage));
     } else {
       // Load data from JSON file
-      loadedData = JSON.parse(loadJSON);
+      const loadedJSON = await uploadJSON();
+      await handleLoadData(loadedJSON);
     }
-
-    if (!loadedData.table)
-      throw new Error("DDB_QUERY_MANAGER invalid data, missing table");
-
-    if (loadedData.table !== table)
-      throw new Error("DDB_QUERY_MANAGER table is not match");
-
-    await expandSection(".bodyWrapper awsui-expandable-section");
-    updateDOMValues(loadedData.values);
   } catch (err) {
     console.error(err);
   } finally {

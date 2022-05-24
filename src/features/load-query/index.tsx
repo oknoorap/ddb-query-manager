@@ -11,10 +11,12 @@ type LoadQueryProps = {
 };
 
 const LoadQuery: FC<LoadQueryProps> = ({ items, onRemoveItem }) => {
-  const { isLoadModalOpen, onOpenLoadModal, onCloseLoadModal } = useLoadQuery();
+  const { isLoadModalOpen, onOpenLoadModal, onCloseLoadModal, loadQuery } =
+    useLoadQuery();
 
-  const onLoadFromStorage = (key: string) => {
-    console.log(key);
+  const onLoadFromStorage = async (key: string) => {
+    await loadQuery(key);
+    onCloseLoadModal();
   };
 
   const onRemoveFromStorage = (key?: string) => {
@@ -27,6 +29,11 @@ const LoadQuery: FC<LoadQueryProps> = ({ items, onRemoveItem }) => {
     }
   };
 
+  const onOpenFromFile = async () => {
+    const json = {};
+    await loadQuery();
+  };
+
   const onLoadButtonClick = (location: LoadLocation) => {
     switch (location) {
       default:
@@ -35,6 +42,7 @@ const LoadQuery: FC<LoadQueryProps> = ({ items, onRemoveItem }) => {
         break;
 
       case LoadLocation.JSON:
+        onOpenFromFile();
         break;
     }
   };

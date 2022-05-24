@@ -14,7 +14,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["get-scan-or-queries.js"],
+      "resources": ["get-scan-or-queries.js", "load-data.js"],
       "matches": ["https://*/*"]
     }
   ]

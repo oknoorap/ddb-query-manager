@@ -41,17 +41,20 @@ const useSaveQuery = () => {
             } catch (err) {
               console.error("Error: ", err);
             } finally {
+              clearInterval(interval);
               script.remove();
               localStorage.removeItem(DDB_QUERY_MANAGER_QUERIES_KEY);
               resolve(queries);
-              clearInterval(interval);
             }
           }
 
           if (intervalCount >= 100000) {
+            localStorage.removeItem(DDB_QUERY_MANAGER_QUERIES_KEY);
             clearInterval(interval);
             resolve(undefined);
           }
+
+          intervalCount++;
         }, 50);
       };
       (document.head || document.documentElement).appendChild(script);
